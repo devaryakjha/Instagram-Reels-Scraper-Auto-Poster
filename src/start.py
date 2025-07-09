@@ -184,10 +184,10 @@ if setup == 'y' :
         auth.login()
 
         mainConfig.ACCOUNTS = input("  (ACCOUNTS) Enter list of username which you want to scrape (comma separated) :")
-        Helper.save_config('ACCOUNTS',mainConfig.ACCOUNTS)
+        Helper.save_config('ACCOUNTS', mainConfig.ACCOUNTS)
 
-        mainConfig.HASTAGS = input("  (HASTAGS) Enter hashtags which you want to add while posting :")
-        Helper.save_config('HASTAGS',mainConfig.HASTAGS)
+        mainConfig.HASHTAGS = input("  (HASHTAGS) Enter hashtags which you want to add while posting :")
+        Helper.save_config('HASHTAGS', mainConfig.HASHTAGS)
 
         while True:
             mainConfig.LIKE_AND_VIEW_COUNTS_DISABLED = input("  (LIKE_AND_VIEW_COUNTS_DISABLED) Enter 1 to Disable or 0 to enable like and views counts :")

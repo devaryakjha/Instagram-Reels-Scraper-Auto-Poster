@@ -98,10 +98,10 @@ def generate_table() -> Panel:
 
     reels = Helper.get_reels()
     total_count = sum(1 for reel in reels)
-    posted_count = sum(1 for reel in reels if reel.is_posted == 1)
-    remaining_count = sum(1 for reel in reels if reel.is_posted == 0)
+    posted_count = sum(1 for reel in reels if getattr(reel, "is_posted", 0) == 1)
+    remaining_count = sum(1 for reel in reels if getattr(reel, "is_posted", 0) == 0)
 
-    title = "Total Reels : " +str(total_count) + " | Posted Reels : "+ str(posted_count)+" | Remaining to Post : "+ str(remaining_count)
+    title = f"Total Reels : {total_count} | Posted Reels : {posted_count} | Remaining to Post : {remaining_count}"
 
 
     table = Table(title=title,padding=0,show_lines=True,expand=True)
@@ -113,11 +113,18 @@ def generate_table() -> Panel:
     table.add_column(" Posted At ")
 
 
-    for reel in Helper.get_latest_ten_reels() :
+    for reel in Helper.get_latest_ten_reels():
+        is_posted = getattr(reel, "is_posted", 0)
+        status = "[red] Pending " if is_posted == 0 else "[green] Posted "
         table.add_row(
-            f" {reel.id} ", f" {reel.post_id} ", f" {reel.account} " ,f"[link=https://instagram.com/p/{reel.code}] View Reel ","[red] Pending " if reel.is_posted == 0 else "[green] Posted ", f" {reel.posted_at} "
+            f" {reel.id} ",
+            f" {reel.post_id} ",
+            f" {reel.account} ",
+            f"[link=https://instagram.com/p/{reel.code}] View Reel ",
+            status,
+            f" {reel.posted_at} "
         )
-    
+
     message_panel = Panel(
         Align.center(
             Group("\n", Align.left(table)),
@@ -169,8 +176,8 @@ job_progress = Progress(
     BarColumn(),
     TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
 )
-task_posted = job_progress.add_task("[green]Posted", start=0)
-task_remaining = job_progress.add_task("[red]Remaining", start=0)
+task_posted = job_progress.add_task("[green]Posted", start=False)
+task_remaining = job_progress.add_task("[red]Remaining", start=False)
 
 
 # Display the progress footer
@@ -181,7 +188,7 @@ def progress_footer() -> Panel:
         Panel(job_progress, title="[b][red]Posting Progress[red]", border_style="green", padding=(1, 2)),
     )
 
-    return progress_table
+    return Panel(progress_table, title="[b][red]Posting Progress[red]", border_style="green", padding=(1, 2))
 
 # Initialize the layout
 layout = make_layout()

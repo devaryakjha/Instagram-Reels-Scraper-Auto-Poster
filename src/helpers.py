@@ -27,7 +27,9 @@ def get_config(key_name) :
     session = Session()
     reel = session.query(Config).filter_by(key=key_name).first()
     session.close()
-    return reel.value
+    if reel is not None:
+        return reel.value
+    return None
 
 # Get the configuration data from the database
 def get_all_config():
@@ -39,11 +41,12 @@ def get_all_config():
 # Load all Config
 def load_all_config() : 
      for config_val in get_all_config():
-        
-        if config_val.key == "ACCOUNTS" or config_val.key == "CHANNEL_LINKS" :
-            setattr(config, config_val.key, config_val.value.split(","))
+        key = getattr(config_val, "key", None)
+        value = getattr(config_val, "value", None)
+        if key in ("ACCOUNTS", "CHANNEL_LINKS"):
+            setattr(config, str(key), str(value).split(","))
         else:
-            setattr(config, config_val.key, config_val.value)
+            setattr(config, str(key), value)
 
 # Save config by key Value
 def save_config(key,value) :

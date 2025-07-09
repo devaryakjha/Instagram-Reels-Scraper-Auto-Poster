@@ -1,5 +1,5 @@
+from pathlib import Path
 from instagrapi import Client
-from instagrapi.exceptions import LoginRequired
 from rich import print
 import config
 import helpers as Helper
@@ -17,9 +17,9 @@ def login() :
     
     if os.path.exists(SESSION_FILE):
         print("   [green] Logging with previous session... [/green]")
-        api.load_settings(SESSION_FILE)
+        api.load_settings(Path(SESSION_FILE))
         api.login (config.USERNAME, config.PASSWORD) # this doesn't actually login using username/password but uses the session
-        api.dump_settings(SESSION_FILE)
+        api.dump_settings(Path(SESSION_FILE))
         api.get_timeline_feed()
         print("   [green] Logged in successfully. [/green]")
         return api
@@ -27,7 +27,7 @@ def login() :
     else :
         print("   [green] Logging with username and password... [/green]")
         api.login(config.USERNAME, config.PASSWORD)
-        api.dump_settings(SESSION_FILE)
+        api.dump_settings(Path(SESSION_FILE))
         api.get_timeline_feed()
         print("   [green] Logged in successfully. [/green]")
         return api

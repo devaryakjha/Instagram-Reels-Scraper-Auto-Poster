@@ -38,7 +38,8 @@ def update_status(code):
 def get_reel():
     session = Session()
     reel = session.query(Reel).filter_by(is_posted=False).first()
-    print(reel.file_path)
+    if reel is not None:
+        print(reel.file_path)
     session.close()
     return reel
 
@@ -59,7 +60,7 @@ def post_to_story(api,media,media_path):
         mentions=[StoryMention(user=username, x=0.49892962, y=0.703125, width=0.8333333333333334, height=0.125)],
         links=[StoryLink(webUri='https://www.instagram.com/p/'+media.code+'/')],
         hashtags=[StoryHashtag(hashtag=hashtag, x=0.23, y=0.32, width=0.5, height=0.22)],
-        medias=[StoryMedia(media_pk=media_pk, x=0.5, y=0.5, width=0.6, height=0.8)],
+        medias=[StoryMedia(media_pk=media_pk, x=0.5, y=0.5, width=0.6, height=0.8, is_pinned=False, is_hidden=False, is_sticker=False, is_fb_sticker=False, user_id=None, product_type=None, media_code=None)],
     )
 
 # Magic Starts Here
@@ -67,7 +68,7 @@ def main(api):
     Helper.load_all_config()
     try:
         reel = get_reel()
-        if os.path.exists(reel.file_path):
+        if reel is not None and isinstance(reel.file_path, str) and os.path.exists(reel.file_path):
             api.delay_range = [1, 3]
             media = api.clip_upload(
                 reel.file_path,
